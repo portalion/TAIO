@@ -10,17 +10,20 @@ int main()
 	{
 		auto graph = reader.readNextGraph();
 		graph.printGraph(std::cout);
-		auto longestCycle = graph.getMaximumCycle();
-		if (!longestCycle.size())
+		auto longestCycles = graph.getLongestCycles();
+		if (!longestCycles.size())
 			continue;
 
-		for (auto v : longestCycle)
+		for (auto cycle : longestCycles)
 		{
-			std::cout << v << "->";
-			if (v == longestCycle.back())
-				std::cout << longestCycle[0];
+			for (auto v : cycle)
+			{
+				std::cout << v << "->";
+				if (v == cycle.back())
+					std::cout << cycle[0] << '\n';
+			}
 		}
 
-		std::cout << "\n\n";
+		std::cout << "Longest cycle count: " << graph.countLongestCycles() << "\n\n";
 	}
 }

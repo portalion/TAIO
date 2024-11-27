@@ -8,7 +8,7 @@ private:
 	int verticesCount;
 	int edgesCount;
 	std::vector<std::vector<int>> edgeMatrix;
-    void searchCycleDFS(int current, int start, std::vector<bool>& visited, std::vector<int>& path, int& maxLength, std::vector<int>& longestCycle);
+    void searchCycleDFS(int current, int start, std::vector<bool>& visited, std::vector<int>& path, int& maxLength, std::vector<std::vector<int>>& allLongestCycles);
 public:
 	Graph(int verticesNumber);
 
@@ -23,6 +23,7 @@ public:
 
 	static int GetDistanceBetweenGraphs(Graph& a, Graph& b);
 
-	std::vector<int> getMaximumCycle();
+	std::vector<std::vector<int>> getLongestCycles();
+	int countLongestCycles();
 };
 

@@ -1,138 +1,117 @@
 ﻿#include "Graph.h"
 #include <ostream>
+#include <unordered_map>
 
 Graph::Graph(int verticesNumber)
 {
-	this->verticesCount = verticesNumber;
-	this->edgeMatrix = std::vector<std::vector<int>>
-		(this->verticesCount, std::vector<int>(this->verticesCount, 0));
+    this->verticesCount = verticesNumber;
+    this->edgeMatrix = std::vector<std::vector<int>>
+        (this->verticesCount, std::vector<int>(this->verticesCount, 0));
 }
 
-void Graph::searchCycleDFS(int current, int start, std::vector<bool>& visited, std::vector<int>& path, int& maxLength, std::vector<int>& longestCycle)
+void Graph::searchCycleDFS(int current, int start, std::vector<bool>& visited, std::vector<int>& path, int& maxLength, std::vector<std::vector<int>>& allLongestCycles)
 {
-	path.push_back(current);
-	visited[current] = true;
+    path.push_back(current);
+    visited[current] = true;
 
-	for (int neighbor = 0; neighbor < verticesCount; ++neighbor)
-	{
-		if (edgeMatrix[current][neighbor])
-		{
-			if (neighbor == start)
-			{
-				if (path.size() > maxLength)
-				{
-					maxLength = path.size();
-					longestCycle = path;
-				}
-			}
-			else if (!visited[neighbor])
-			{
-				searchCycleDFS(neighbor, start, visited, path, maxLength, longestCycle);
-			}
-		}
-	}
+    for (int neighbor = 0; neighbor < verticesCount; ++neighbor)
+    {
+        if (edgeMatrix[current][neighbor])
+        {
+            if (neighbor == start)
+            {
+                if (path.size() > maxLength)
+                {
+                    maxLength = path.size();
+                    allLongestCycles.clear();
+                    allLongestCycles.push_back(path);
+                }
+                else if (path.size() == maxLength)
+                {
+                    allLongestCycles.push_back(path);
+                }
+            }
+            else if (!visited[neighbor])
+            {
+                searchCycleDFS(neighbor, start, visited, path, maxLength, allLongestCycles);
+            }
+        }
+    }
 
-	visited[current] = false;
-	path.pop_back();
+    visited[current] = false;
+    path.pop_back();
 }
 
 bool Graph::addEdge(int vertexA, int vertexB)
 {
-	bool hadEdge = hasEdge(vertexA, vertexB);
-	edgeMatrix[vertexA][vertexB] = 1;
+    bool hadEdge = hasEdge(vertexA, vertexB);
+    edgeMatrix[vertexA][vertexB] = 1;
 
-	edgesCount++;
-	if (hadEdge)
-		edgesCount--;
+    edgesCount++;
+    if (hadEdge)
+        edgesCount--;
 
-	return !hadEdge;
+    return !hadEdge;
 }
 
 bool Graph::removeEdge(int vertexA, int vertexB)
 {
-	bool hadEdge = hasEdge(vertexA, vertexB);
-	edgeMatrix[vertexA][vertexB] = 0;
+    bool hadEdge = hasEdge(vertexA, vertexB);
+    edgeMatrix[vertexA][vertexB] = 0;
 
-	edgesCount--;
-	if (hadEdge)
-		edgesCount++;
+    edgesCount--;
+    if (hadEdge)
+        edgesCount++;
 
-	return hadEdge;
+    return hadEdge;
 }
 
 void Graph::setEdge(int vertexA, int vertexB, int value)
 {
-	if (value == 0)
-		removeEdge(vertexA, vertexB);
-	else
-		addEdge(vertexA, vertexB);
+    if (value == 0)
+        removeEdge(vertexA, vertexB);
+    else
+        addEdge(vertexA, vertexB);
 }
 
 void Graph::printGraph(std::ostream& stream) const
 {
-	stream << this->verticesCount << '\n';
+    stream << this->verticesCount << '\n';
 
-	for (std::vector<int> row : this->edgeMatrix)
-	{
-		for (int edgeValue : row)
-			stream << edgeValue << ' ';
-		stream << '\n';
-	}
+    for (std::vector<int> row : this->edgeMatrix)
+    {
+        for (int edgeValue : row)
+            stream << edgeValue << ' ';
+        stream << '\n';
+    }
 }
 
-int Graph::GetDistanceBetweenGraphs(Graph& a, Graph& b)
+std::vector<std::vector<int>> Graph::getLongestCycles()
 {
-	if (a.verticesCount > b.verticesCount)
-	{
-		return GetDistanceBetweenGraphs(b, a);
-	}
-	
-	int result = 0;
-	result += std::abs(a.verticesCount - b.verticesCount);
+    int maxLength = 0;
+    std::vector<std::vector<int>> allLongestCycles;
+    std::vector<bool> visited(verticesCount, false);
+    std::vector<int> path;
 
-	for (int i = 0; i < a.verticesCount; i++)
-	{
-		for (int j = 0; j < a.verticesCount; j++)
-		{
-			if (a.edgeMatrix[i][j] != b.edgeMatrix[i][j])
-				result++;
-		}
-	}
+    for (int start = 0; start < verticesCount; ++start)
+    {
+        searchCycleDFS(start, start, visited, path, maxLength, allLongestCycles);
+    }
 
-	for (int i = a.verticesCount; i < b.verticesCount; i++)
-	{
-		for (int j = 0; j < b.verticesCount; j++)
-		{
-			if (b.edgeMatrix[i][j] == 1)
-				result++;
-			if (b.edgeMatrix[j][i] == 1)
-				result++;
-		}
-	}
-
-	for (int i = a.verticesCount; i < b.verticesCount; i++)
-	{
-		for (int j = a.verticesCount; j < b.verticesCount; j++)
-		{
-			if (b.edgeMatrix[i][j] == 1)
-				result--;
-		}
-	}
-
-	return result;
+    return allLongestCycles;
 }
 
-std::vector<int> Graph::getMaximumCycle()
+int Graph::countLongestCycles()
 {
-	int maxLength = 0;
-	std::vector<int> longestCycle;
-	std::vector<bool> visited(verticesCount, false);
-	std::vector<int> path;
+    int maxLength = 0;
+    std::vector<std::vector<int>> allLongestCycles;
+    std::vector<bool> visited(verticesCount, false);
+    std::vector<int> path;
 
-	for (int start = 0; start < verticesCount; ++start)
-	{
-		searchCycleDFS(start, start, visited, path, maxLength, longestCycle);
-	}
+    for (int start = 0; start < verticesCount; ++start)
+    {
+        searchCycleDFS(start, start, visited, path, maxLength, allLongestCycles);
+    }
 
-	return longestCycle;
+    return allLongestCycles.size();
 }
