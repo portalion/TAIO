@@ -1,12 +1,14 @@
-#pragma once
+﻿#pragma once
 #include <vector>
 #include <iostream>
+
 class Graph
 {
 private:
 	int verticesCount;
 	int edgesCount;
 	std::vector<std::vector<int>> edgeMatrix;
+    void searchCycleDFS(int current, int start, std::vector<bool>& visited, std::vector<int>& path, int& maxLength, std::vector<int>& longestCycle);
 public:
 	Graph(int verticesNumber);
 
@@ -20,5 +22,7 @@ public:
 	void printGraph(std::ostream& stream) const;
 
 	static int GetDistanceBetweenGraphs(Graph& a, Graph& b);
+
+	std::vector<int> getLongestCycle();
 };
 

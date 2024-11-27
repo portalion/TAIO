@@ -1,4 +1,4 @@
-#include "Graph.h"
+﻿#include "Graph.h"
 #include <ostream>
 
 Graph::Graph(int verticesNumber)
@@ -6,6 +6,34 @@ Graph::Graph(int verticesNumber)
 	this->verticesCount = verticesNumber;
 	this->edgeMatrix = std::vector<std::vector<int>>
 		(this->verticesCount, std::vector<int>(this->verticesCount, 0));
+}
+
+void Graph::searchCycleDFS(int current, int start, std::vector<bool>& visited, std::vector<int>& path, int& maxLength, std::vector<int>& longestCycle)
+{
+	path.push_back(current);
+	visited[current] = true;
+
+	for (int neighbor = 0; neighbor < verticesCount; ++neighbor)
+	{
+		if (edgeMatrix[current][neighbor])
+		{
+			if (neighbor == start)
+			{
+				if (path.size() > maxLength)
+				{
+					maxLength = path.size();
+					longestCycle = path;
+				}
+			}
+			else if (!visited[neighbor])
+			{
+				searchCycleDFS(neighbor, start, visited, path, maxLength, longestCycle);
+			}
+		}
+	}
+
+	visited[current] = false;
+	path.pop_back();
 }
 
 bool Graph::addEdge(int vertexA, int vertexB)
@@ -50,7 +78,6 @@ void Graph::printGraph(std::ostream& stream) const
 			stream << edgeValue << ' ';
 		stream << '\n';
 	}
-	stream << '\n';
 }
 
 int Graph::GetDistanceBetweenGraphs(Graph& a, Graph& b)
@@ -93,4 +120,19 @@ int Graph::GetDistanceBetweenGraphs(Graph& a, Graph& b)
 	}
 
 	return result;
+}
+
+std::vector<int> Graph::getLongestCycle()
+{
+	int maxLength = 0;
+	std::vector<int> longestCycle;
+	std::vector<bool> visited(verticesCount, false);
+	std::vector<int> path;
+
+	for (int start = 0; start < verticesCount; ++start)
+	{
+		searchCycleDFS(start, start, visited, path, maxLength, longestCycle);
+	}
+
+	return longestCycle;
 }

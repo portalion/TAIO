@@ -8,6 +8,19 @@ int main()
 	auto reader = GraphReader(input);
 	while (!reader.isEmpty())
 	{
-		reader.readNextGraph().printGraph(std::cout);
+		auto graph = reader.readNextGraph();
+		graph.printGraph(std::cout);
+		auto longestCycle = graph.getLongestCycle();
+		if (!longestCycle.size())
+			continue;
+
+		for (auto v : longestCycle)
+		{
+			std::cout << v << "->";
+			if (v == longestCycle.back())
+				std::cout << longestCycle[0];
+		}
+
+		std::cout << "\n\n";
 	}
 }
