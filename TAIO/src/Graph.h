@@ -23,6 +23,6 @@ public:
 
 	static int GetDistanceBetweenGraphs(Graph& a, Graph& b);
 
-	std::vector<int> getLongestCycle();
+	std::vector<int> getMaximumCycle();
 };
 

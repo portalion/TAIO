@@ -10,7 +10,7 @@ int main()
 	{
 		auto graph = reader.readNextGraph();
 		graph.printGraph(std::cout);
-		auto longestCycle = graph.getLongestCycle();
+		auto longestCycle = graph.getMaximumCycle();
 		if (!longestCycle.size())
 			continue;
 

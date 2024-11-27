@@ -122,7 +122,7 @@ int Graph::GetDistanceBetweenGraphs(Graph& a, Graph& b)
 	return result;
 }
 
-std::vector<int> Graph::getLongestCycle()
+std::vector<int> Graph::getMaximumCycle()
 {
 	int maxLength = 0;
 	std::vector<int> longestCycle;
