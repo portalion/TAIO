@@ -3,33 +3,46 @@
 
 Graph::Graph(int verticesNumber)
 {
-	this->verticesNumber = verticesNumber;
+	this->verticesCount = verticesNumber;
 	this->edgeMatrix = std::vector<std::vector<int>>
-		(this->verticesNumber, std::vector<int>(this->verticesNumber, 0));
+		(this->verticesCount, std::vector<int>(this->verticesCount, 0));
 }
 
 bool Graph::addEdge(int vertexA, int vertexB)
 {
+	bool hadEdge = hasEdge(vertexA, vertexB);
 	edgeMatrix[vertexA][vertexB] = 1;
 
-	return !hasEdge(vertexA, vertexB);
+	edgesCount++;
+	if (hadEdge)
+		edgesCount--;
+
+	return !hadEdge;
 }
 
 bool Graph::removeEdge(int vertexA, int vertexB)
 {
+	bool hadEdge = hasEdge(vertexA, vertexB);
 	edgeMatrix[vertexA][vertexB] = 0;
 
-	return hasEdge(vertexA, vertexB);
+	edgesCount--;
+	if (hadEdge)
+		edgesCount++;
+
+	return hadEdge;
 }
 
 void Graph::setEdge(int vertexA, int vertexB, int value)
 {
-	edgeMatrix[vertexA][vertexB] = value;
+	if (value == 0)
+		removeEdge(vertexA, vertexB);
+	else
+		addEdge(vertexA, vertexB);
 }
 
 void Graph::printGraph(std::ostream& stream) const
 {
-	stream << this->verticesNumber << '\n';
+	stream << this->verticesCount << '\n';
 
 	for (std::vector<int> row : this->edgeMatrix)
 	{
@@ -40,3 +53,44 @@ void Graph::printGraph(std::ostream& stream) const
 	stream << '\n';
 }
 
+int Graph::GetDistanceBetweenGraphs(Graph& a, Graph& b)
+{
+	if (a.verticesCount > b.verticesCount)
+	{
+		return GetDistanceBetweenGraphs(b, a);
+	}
+	
+	int result = 0;
+	result += std::abs(a.verticesCount - b.verticesCount);
+
+	for (int i = 0; i < a.verticesCount; i++)
+	{
+		for (int j = 0; j < a.verticesCount; j++)
+		{
+			if (a.edgeMatrix[i][j] != b.edgeMatrix[i][j])
+				result++;
+		}
+	}
+
+	for (int i = a.verticesCount; i < b.verticesCount; i++)
+	{
+		for (int j = 0; j < b.verticesCount; j++)
+		{
+			if (b.edgeMatrix[i][j] == 1)
+				result++;
+			if (b.edgeMatrix[j][i] == 1)
+				result++;
+		}
+	}
+
+	for (int i = a.verticesCount; i < b.verticesCount; i++)
+	{
+		for (int j = a.verticesCount; j < b.verticesCount; j++)
+		{
+			if (b.edgeMatrix[i][j] == 1)
+				result--;
+		}
+	}
+
+	return result;
+}

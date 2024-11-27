@@ -4,7 +4,8 @@
 class Graph
 {
 private:
-	int verticesNumber;
+	int verticesCount;
+	int edgesCount;
 	std::vector<std::vector<int>> edgeMatrix;
 public:
 	Graph(int verticesNumber);
@@ -13,8 +14,11 @@ public:
 	bool removeEdge(int vertexA, int vertexB);
 	void setEdge(int vertexA, int vertexB, int value);
 	inline bool hasEdge(int vertexA, int vertexB) const { return edgeMatrix[vertexA][vertexB]; }
-	inline int getNumberOfVertices() { return verticesNumber; }
+	inline int getNumberOfVertices() { return verticesCount; }
+	inline int getNumberOfEdges() { return edgesCount; }
 
 	void printGraph(std::ostream& stream) const;
+
+	static int GetDistanceBetweenGraphs(Graph& a, Graph& b);
 };
 
