@@ -1,8 +1,13 @@
 #include <iostream>
+#include "GraphReader.h"
 
-using namespace std;
 
 int main()
 {
-	cout << "hello world" << endl;
+	std::ifstream input("data\\test1.txt");
+	auto reader = GraphReader(input);
+	while (!reader.isEmpty())
+	{
+		reader.readNextGraph().printGraph(std::cout);
+	}
 }
