@@ -96,11 +96,6 @@ std::vector<std::pair<int, int>> graphComplement(Graph graph)
                 }
             }
 
-            if (s == 5)
-            {
-                s = 5;
-            }
-
             std::pair<std::set<int>, int> keyPair;
             keyPair.first = subset;
             keyPair.second = k;
