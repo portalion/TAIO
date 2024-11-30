@@ -95,6 +95,12 @@ std::vector<std::pair<int, int>> graphComplement(Graph graph)
                     minM = m;
                 }
             }
+
+            if (s == 5)
+            {
+                s = 5;
+            }
+
             std::pair<std::set<int>, int> keyPair;
             keyPair.first = subset;
             keyPair.second = k;
@@ -121,18 +127,19 @@ std::vector<std::pair<int, int>> graphComplement(Graph graph)
     for (int k = 1; k < n; ++k)
     {
         keyPair.second = k;
-        int cost = g[keyPair].second + graph.hasEdge(0, k) ? 0 : 1;
+        int cost = g[keyPair].second + (graph.hasEdge(k, 0) ? 0 : 1);
         if (cost < bestCost)
         {
             bestCost = cost;
             bestK = k;
         }
     }
-
+    
     keyPair.second = bestK;
     std::vector<int> finalPath = g[keyPair].first;
     finalPath.push_back(0);
     finalPath.push_back(finalPath[0]);
+
     for (int i = 0; i < n; ++i)
     {
         if (!graph.hasEdge(finalPath[i], finalPath[i + 1]))
