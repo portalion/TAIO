@@ -31,6 +31,7 @@ void Graph::searchCycleDFS(int current, int start, std::vector<bool>& visited, s
                     allLongestCycles.push_back(path);
                 }
             }
+            // could we add that condition path.size() + (verticesCount - path.size()) > maxLength
             else if (!visited[neighbor])
             {
                 searchCycleDFS(neighbor, start, visited, path, maxLength, allLongestCycles);
