@@ -23,14 +23,13 @@
     <ClCompile Include="src\GraphReader.cpp" />
     <ClCompile Include="src\Graph.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\WeightedGraph.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Algorithms.h" />
     <ClInclude Include="src\GraphReader.h" />
     <ClInclude Include="src\Graph.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\generator.py" />
+    <ClInclude Include="src\WeightedGraph.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
