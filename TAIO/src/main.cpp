@@ -7,10 +7,8 @@ int main()
 {
     std::cout << "Hello from main!\n";
 
-    std::ifstream input("data\\test10.txt");
+    std::ifstream input("data\\test5.txt");
     auto reader = GraphReader(input);
-
-    int counter = 0;
 
     while (!reader.isEmpty())
     {   
@@ -45,7 +43,6 @@ int main()
         std::cout << elapsed.count() << "s \n";
         std::cout << "====================================\n";
 
-        counter++;
     }
 
     std::cout << "Goodbye from main\n";
