@@ -7,6 +7,13 @@
 #include <algorithm>
 #include "Graph.h"
 
+// ===== Max cycles =====
+
+std::vector<std::vector<int>> getMaxCycles(Graph& graph);
+int getMaxCyclesCount(Graph& graph);
+
+// ===== Max cycles =====
+
 // ===== Complement finding =====
 
 std::vector<std::pair<int, int>> graphComplement(Graph graph);

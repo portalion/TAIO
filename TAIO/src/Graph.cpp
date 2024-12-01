@@ -1,6 +1,7 @@
 ﻿#include "Graph.h"
 #include <ostream>
 #include <unordered_map>
+#include <stack>
 
 Graph::Graph(int verticesNumber)
 {
@@ -9,38 +10,40 @@ Graph::Graph(int verticesNumber)
         (this->verticesCount, std::vector<int>(this->verticesCount, 0));
 }
 
-void Graph::searchCycleDFS(int current, int start, std::vector<bool>& visited, std::vector<int>& path, int& maxLength, std::vector<std::vector<int>>& allLongestCycles)
-{
-    path.push_back(current);
-    visited[current] = true;
+std::vector<int> Graph::approximationDFS(int start) {
+    std::vector<bool> visited(verticesCount, false);
+    std::vector<int> parent(verticesCount, -1);
+    std::stack<int> stack;
+    std::vector<int> path;
+    std::vector<int> longestPath;
 
-    for (int neighbor = 0; neighbor < verticesCount; ++neighbor)
+    stack.push(start);
+    visited[start] = true;
+
+    while (!stack.empty()) 
     {
-        if (edgeMatrix[current][neighbor])
+        int current = stack.top();
+        stack.pop();
+        path.push_back(current);
+
+        for (int neighbor = 0; neighbor < verticesCount; ++neighbor) 
         {
-            if (neighbor == start)
+            if (edgeMatrix[current][neighbor]) 
             {
-                if (path.size() > maxLength)
+                if (visited[neighbor] && neighbor != parent[current]) 
                 {
-                    maxLength = path.size();
-                    allLongestCycles.clear();
-                    allLongestCycles.push_back(path);
+                    longestPath = longestPath.size() < path.size() ? path : longestPath;
                 }
-                else if (path.size() == maxLength)
-                {
-                    allLongestCycles.push_back(path);
+                else if (!visited[neighbor]) {
+                    stack.push(neighbor);
+                    visited[neighbor] = true;
+                    parent[neighbor] = current;
                 }
-            }
-            // could we add that condition path.size() + (verticesCount - path.size()) > maxLength
-            else if (!visited[neighbor])
-            {
-                searchCycleDFS(neighbor, start, visited, path, maxLength, allLongestCycles);
             }
         }
     }
 
-    visited[current] = false;
-    path.pop_back();
+    return longestPath;
 }
 
 bool Graph::addEdge(int vertexA, int vertexB)
@@ -85,34 +88,4 @@ void Graph::printGraph(std::ostream& stream) const
             stream << edgeValue << ' ';
         stream << '\n';
     }
-}
-
-std::vector<std::vector<int>> Graph::getLongestCycles()
-{
-    int maxLength = 0;
-    std::vector<std::vector<int>> allLongestCycles;
-    std::vector<bool> visited(verticesCount, false);
-    std::vector<int> path;
-
-    for (int start = 0; start < verticesCount; ++start)
-    {
-        searchCycleDFS(start, start, visited, path, maxLength, allLongestCycles);
-    }
-
-    return allLongestCycles;
-}
-
-int Graph::countLongestCycles()
-{
-    int maxLength = 0;
-    std::vector<std::vector<int>> allLongestCycles;
-    std::vector<bool> visited(verticesCount, false);
-    std::vector<int> path;
-
-    for (int start = 0; start < verticesCount; ++start)
-    {
-        searchCycleDFS(start, start, visited, path, maxLength, allLongestCycles);
-    }
-
-    return allLongestCycles.size();
 }

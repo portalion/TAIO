@@ -1,10 +1,11 @@
-#include "Graph.h"
+﻿#include "Graph.h"
 #include <stack>
 #include <map>
 #include <set>
 #include <queue>
 #include <vector>
 #include <algorithm>
+#include "Algorithms.h"
 
 bool compareBySize(const std::set<int>& a, const std::set<int>& b) {
     return a.size() < b.size();
@@ -37,6 +38,60 @@ std::vector<std::set<int>> getAllSubsets(int n)
 
     std::sort(vec.begin(), vec.end(), compareBySize);
     return vec;
+}
+
+void maxCyclesDFS(Graph& graph, int current, int start, std::vector<bool>& visited, std::vector<int>& path, int& maxLength, std::vector<std::vector<int>>& maxCycles)
+{
+    path.push_back(current);
+    visited[current] = true;
+
+    for (int neighbor = 0; neighbor < graph.getNumberOfVertices(); ++neighbor)
+    {
+        if (graph.hasEdge(current, neighbor))
+        {
+            if (neighbor == start) 
+            {
+                if (path.size() > maxLength)
+                {
+                    maxLength = path.size();
+                    maxCycles.clear();
+                    maxCycles.push_back(path);
+                }
+                else if (path.size() == maxLength)
+                {
+                    maxCycles.push_back(path);
+                }
+            }
+            else if (!visited[neighbor])
+            {
+                maxCyclesDFS(graph, neighbor, start, visited, path, maxLength, maxCycles);
+            }
+        }
+    }
+
+    visited[current] = false;
+    path.pop_back();
+}
+
+std::vector<std::vector<int>> getMaxCycles(Graph& graph)
+{
+    int verticesCount = graph.getNumberOfVertices();
+    std::vector<std::vector<int>> allLongestCycles;
+    int maxLength = 0;
+    std::vector<bool> visited(verticesCount, false);
+    std::vector<int> path;
+
+    for (int start = 0; start < verticesCount; ++start)
+    {
+        maxCyclesDFS(graph, start, start, visited, path, maxLength, allLongestCycles);
+    }
+
+    return allLongestCycles;
+}
+
+int getMaxCyclesCount(Graph& graph)
+{
+    return getMaxCycles(graph).size();
 }
 
 std::vector<std::pair<int, int>> graphComplement(Graph graph)
