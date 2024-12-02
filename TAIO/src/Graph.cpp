@@ -10,42 +10,6 @@ Graph::Graph(int verticesNumber)
         (this->verticesCount, std::vector<int>(this->verticesCount, 0));
 }
 
-std::vector<int> Graph::approximationDFS(int start) {
-    std::vector<bool> visited(verticesCount, false);
-    std::vector<int> parent(verticesCount, -1);
-    std::stack<int> stack;
-    std::vector<int> path;
-    std::vector<int> longestPath;
-
-    stack.push(start);
-    visited[start] = true;
-
-    while (!stack.empty()) 
-    {
-        int current = stack.top();
-        stack.pop();
-        path.push_back(current);
-
-        for (int neighbor = 0; neighbor < verticesCount; ++neighbor) 
-        {
-            if (edgeMatrix[current][neighbor]) 
-            {
-                if (visited[neighbor] && neighbor != parent[current]) 
-                {
-                    longestPath = longestPath.size() < path.size() ? path : longestPath;
-                }
-                else if (!visited[neighbor]) {
-                    stack.push(neighbor);
-                    visited[neighbor] = true;
-                    parent[neighbor] = current;
-                }
-            }
-        }
-    }
-
-    return longestPath;
-}
-
 bool Graph::addEdge(int vertexA, int vertexB)
 {
     bool hadEdge = hasEdge(vertexA, vertexB);

@@ -12,6 +12,9 @@
 std::vector<std::vector<int>> getMaxCycles(Graph& graph);
 int getMaxCyclesCount(Graph& graph);
 
+std::vector<std::vector<int>> approxGetMaxCycles(Graph& graph);
+int approxGetMaxCyclesCount(Graph& graph);
+
 // ===== Max cycles =====
 
 // ===== Complement finding =====

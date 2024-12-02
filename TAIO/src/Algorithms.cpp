@@ -94,6 +94,70 @@ int getMaxCyclesCount(Graph& graph)
     return getMaxCycles(graph).size();
 }
 
+std::vector<std::vector<int>> approxGetMaxCycles(Graph& graph)
+{
+    int verticesCount = graph.getNumberOfVertices();
+    std::vector<std::vector<int>> maxCycles;
+    int maxCycleLength = 0;
+
+    for (int start = 0; start < verticesCount; ++start)
+    {
+        std::vector<bool> visited(verticesCount, false);
+        std::stack<int> stack;
+        std::vector<int> path;
+
+        stack.push(start);
+        while (!stack.empty())
+        {
+            int current = stack.top();
+            if (!visited[current])
+            {
+                visited[current] = true;
+                path.push_back(current);
+
+                for (int neighbor = 0; neighbor < verticesCount; ++neighbor)
+                {
+                    if (graph.hasEdge(current, neighbor))
+                    {
+                        if (!visited[neighbor])
+                        {
+                            stack.push(neighbor);
+                        }
+                        else if (visited[neighbor] && neighbor == start)
+                        {
+                            if (path.size() > maxCycleLength)
+                            {
+                                maxCycleLength = path.size();
+                                maxCycles.clear();
+                                maxCycles.push_back(path);
+                            }
+                            else if (path.size() == maxCycleLength)
+                            {
+                                maxCycles.push_back(path);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                stack.pop();
+
+                if (!path.empty() && path.back() == current)
+                {
+                    path.pop_back();
+                }
+            }
+        }
+    }
+    return maxCycles;
+}
+
+int approxGetMaxCyclesCount(Graph& graph)
+{
+    return approxGetMaxCycles(graph).size();
+}
+
 std::vector<std::pair<int, int>> graphComplement(Graph graph)
 {
     std::vector<std::pair<int, int>> complement;

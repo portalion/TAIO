@@ -10,7 +10,6 @@ private:
 	std::vector<std::vector<int>> edgeMatrix;
 
 public:
-	std::vector<int> approximationDFS(int start);
 	Graph(int verticesNumber);
 
 	bool addEdge(int vertexA, int vertexB);
