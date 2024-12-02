@@ -6,6 +6,7 @@
 #include <vector>
 #include <algorithm>
 #include "Graph.h"
+#include "WeightedGraph.h"
 
 // ===== Max cycles =====
 
@@ -20,5 +21,8 @@ int approxGetMaxCyclesCount(Graph& graph);
 // ===== Complement finding =====
 
 std::vector<std::pair<int, int>> graphComplement(Graph graph);
+
+std::vector<std::pair<int, int>> ApproximateATSP(const Graph& graph, int startVertex, int maxDepth);
+
 
 // ===== Complement finding =====

@@ -5,6 +5,8 @@
 #include <queue>
 #include <vector>
 #include <algorithm>
+#include <limits>
+#include "WeightedGraph.h"
 #include "Algorithms.h"
 
 bool compareBySize(const std::set<int>& a, const std::set<int>& b) {
@@ -214,6 +216,7 @@ std::vector<std::pair<int, int>> graphComplement(Graph graph)
                     minM = m;
                 }
             }
+
             std::pair<std::set<int>, int> keyPair;
             keyPair.first = subset;
             keyPair.second = k;
@@ -240,18 +243,19 @@ std::vector<std::pair<int, int>> graphComplement(Graph graph)
     for (int k = 1; k < n; ++k)
     {
         keyPair.second = k;
-        int cost = g[keyPair].second + graph.hasEdge(0, k) ? 0 : 1;
+        int cost = g[keyPair].second + (graph.hasEdge(k, 0) ? 0 : 1);
         if (cost < bestCost)
         {
             bestCost = cost;
             bestK = k;
         }
     }
-
+    
     keyPair.second = bestK;
     std::vector<int> finalPath = g[keyPair].first;
     finalPath.push_back(0);
     finalPath.push_back(finalPath[0]);
+
     for (int i = 0; i < n; ++i)
     {
         if (!graph.hasEdge(finalPath[i], finalPath[i + 1]))
@@ -264,4 +268,131 @@ std::vector<std::pair<int, int>> graphComplement(Graph graph)
     }
 
     return complement;
+}
+int lookaheadCost(
+    const WeightedGraph& weightedGraph,
+    int currentVertex,
+    std::vector<bool>& visited,
+    int depth,
+    int maxDepth)
+{
+    if (depth == maxDepth)
+    {
+        return 0;
+    }
+
+    int n = weightedGraph.getVerticesCount();
+    int minCost = std::numeric_limits<int>::max();
+
+    for (int i = 0; i < n; ++i)
+    {
+        if (!visited[i])
+        {
+            int edgeWeight = weightedGraph.getEdgeWeight(currentVertex, i);
+            if (edgeWeight == std::numeric_limits<int>::max())
+                continue; // Brak kraw�dzi, pomijamy
+
+            visited[i] = true;
+            int cost = edgeWeight + lookaheadCost(weightedGraph, i, visited, depth + 1, maxDepth);
+            if (cost < minCost)
+            {
+                minCost = cost;
+            }
+            visited[i] = false;
+        }
+    }
+
+    if (minCost == std::numeric_limits<int>::max())
+    {
+        return 0;
+    }
+
+    return minCost;
+}
+
+
+std::vector<std::pair<int, int>> ApproximateATSP(const Graph& graph, int startVertex, int maxDepth = 3)
+{
+    std::vector<std::pair<int, int>> complementEdges;
+
+    WeightedGraph weightedGraph = WeightedGraph::FromUnweightedGraph(graph);
+
+    int n = weightedGraph.getVerticesCount();
+    std::vector<bool> visited(n, false);
+    int currentVertex = startVertex;
+    visited[currentVertex] = true;
+
+    std::vector<int> path;
+    path.push_back(currentVertex);
+
+    for (int i = 0; i < n - 1; ++i)
+    {
+        int nextVertex = -1;
+        int minTotalCost = std::numeric_limits<int>::max();
+
+        for (int j = 0; j < n; ++j)
+        {
+            if (!visited[j])
+            {
+                int edgeWeight = weightedGraph.getEdgeWeight(currentVertex, j);
+
+                if (edgeWeight == std::numeric_limits<int>::max())
+                    continue;
+
+                visited[j] = true;
+
+                int estimatedCost = edgeWeight + lookaheadCost(weightedGraph, j, visited, 1, maxDepth);
+
+                visited[j] = false;
+
+                if (estimatedCost < minTotalCost)
+                {
+                    minTotalCost = estimatedCost;
+                    nextVertex = j;
+                }
+            }
+        }
+
+        if (nextVertex == -1)
+        {
+            // Nie znaleziono nast�pnego wierzcho�ka
+            // Mo�emy spr�bowa� znale�� najbli�szy nieodwiedzony wierzcho�ek, nawet je�li nie ma bezpo�redniej kraw�dzi
+            for (int j = 0; j < n; ++j)
+            {
+                if (!visited[j])
+                {
+                    visited[j] = true;
+                    currentVertex = j;
+                    path.push_back(currentVertex);
+                    break;
+                }
+            }
+            continue;
+        }
+
+        visited[nextVertex] = true;
+        currentVertex = nextVertex;
+        path.push_back(currentVertex);
+    }
+
+
+    int returnEdgeWeight = weightedGraph.getEdgeWeight(currentVertex, startVertex);
+    if (returnEdgeWeight == std::numeric_limits<int>::max())
+    {
+        complementEdges.push_back(std::make_pair(currentVertex, startVertex));
+    }
+    path.push_back(startVertex); // Zamyka cykl
+
+ 
+    for (size_t i = 0; i < path.size() - 1; ++i)
+    {
+        int from = path[i];
+        int to = path[i + 1];
+        if (!graph.hasEdge(from, to))
+        {
+            complementEdges.push_back(std::make_pair(from, to));
+        }
+    }
+
+    return complementEdges;
 }

@@ -6,8 +6,8 @@ import random
 # out_name: str - name of the output file that graphs will be written into
 #                 this file will be stored in ../data/$out_name location
 # sizes: list[int] - list of sizes of consecutive generated graphs
-out_name = 'test2.txt'
-sizes = [3, 4, 5, 6, 7, 8, 9, 10]
+out_name = 'test10.txt'
+sizes = list(range(500, 1000))
 
 file_path = os.path.join('..', 'data', out_name)
 with open(file_path, 'w') as file:
