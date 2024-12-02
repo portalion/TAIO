@@ -1,12 +1,14 @@
-#pragma once
+﻿#pragma once
 #include <vector>
 #include <iostream>
+
 class Graph
 {
 private:
-	int verticesCount;
 	int edgesCount;
+	int verticesCount;
 	std::vector<std::vector<int>> edgeMatrix;
+
 public:
 	Graph(int verticesNumber);
 

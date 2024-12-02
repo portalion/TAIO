@@ -26,7 +26,7 @@ int main()
 
         int startVertex = 0;
         int depth = 1;
-        std::cout << counter << ". Smalest complement approximation: " << std::endl;
+        //std::cout << counter << ". Smalest complement approximation: " << std::endl;
         
         auto start = std::chrono::high_resolution_clock::now();
         
@@ -42,8 +42,31 @@ int main()
         std::cout << '\n';
         std::cout << elapsed.count() << "s \n";
         std::cout << "====================================\n";
-
     }
+
+	//std::ifstream input("data\\test1.txt");
+	//auto reader = GraphReader(input);
+	//while (!reader.isEmpty())
+	//{
+	//	std::cout << "====================================\n";
+	//	Graph graph = reader.readNextGraph();
+	//	graph.printGraph(std::cout);
+	//	std::cout << '\n';
+
+	//	auto maxCycles = approxGetMaxCycles(graph);
+
+	//	for (auto cycle : maxCycles)
+	//	{
+	//		for (auto v : cycle)
+	//		{
+	//			std::cout << v << ' ';
+	//		}
+	//		std::cout << '\n';
+	//	}
+
+	//	std::cout << '\n';
+	//	std::cout << "====================================\n";
+	//}
 
     std::cout << "Goodbye from main\n";
     return 0;

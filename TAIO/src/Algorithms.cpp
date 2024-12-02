@@ -1,4 +1,4 @@
-#include "Graph.h"
+ï»¿#include "Graph.h"
 #include <stack>
 #include <map>
 #include <set>
@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <limits>
 #include "WeightedGraph.h"
+#include "Algorithms.h"
 
 bool compareBySize(const std::set<int>& a, const std::set<int>& b) {
     return a.size() < b.size();
@@ -39,6 +40,124 @@ std::vector<std::set<int>> getAllSubsets(int n)
 
     std::sort(vec.begin(), vec.end(), compareBySize);
     return vec;
+}
+
+void maxCyclesDFS(Graph& graph, int current, int start, std::vector<bool>& visited, std::vector<int>& path, int& maxLength, std::vector<std::vector<int>>& maxCycles)
+{
+    path.push_back(current);
+    visited[current] = true;
+
+    for (int neighbor = 0; neighbor < graph.getNumberOfVertices(); ++neighbor)
+    {
+        if (graph.hasEdge(current, neighbor))
+        {
+            if (neighbor == start) 
+            {
+                if (path.size() > maxLength)
+                {
+                    maxLength = path.size();
+                    maxCycles.clear();
+                    maxCycles.push_back(path);
+                }
+                else if (path.size() == maxLength)
+                {
+                    maxCycles.push_back(path);
+                }
+            }
+            else if (!visited[neighbor])
+            {
+                maxCyclesDFS(graph, neighbor, start, visited, path, maxLength, maxCycles);
+            }
+        }
+    }
+
+    visited[current] = false;
+    path.pop_back();
+}
+
+std::vector<std::vector<int>> getMaxCycles(Graph& graph)
+{
+    int verticesCount = graph.getNumberOfVertices();
+    std::vector<std::vector<int>> allLongestCycles;
+    int maxLength = 0;
+    std::vector<bool> visited(verticesCount, false);
+    std::vector<int> path;
+
+    for (int start = 0; start < verticesCount; ++start)
+    {
+        maxCyclesDFS(graph, start, start, visited, path, maxLength, allLongestCycles);
+    }
+
+    return allLongestCycles;
+}
+
+int getMaxCyclesCount(Graph& graph)
+{
+    return getMaxCycles(graph).size();
+}
+
+std::vector<std::vector<int>> approxGetMaxCycles(Graph& graph)
+{
+    int verticesCount = graph.getNumberOfVertices();
+    std::vector<std::vector<int>> maxCycles;
+    int maxCycleLength = 0;
+
+    for (int start = 0; start < verticesCount; ++start)
+    {
+        std::vector<bool> visited(verticesCount, false);
+        std::stack<int> stack;
+        std::vector<int> path;
+
+        stack.push(start);
+        while (!stack.empty())
+        {
+            int current = stack.top();
+            if (!visited[current])
+            {
+                visited[current] = true;
+                path.push_back(current);
+
+                for (int neighbor = 0; neighbor < verticesCount; ++neighbor)
+                {
+                    if (graph.hasEdge(current, neighbor))
+                    {
+                        if (!visited[neighbor])
+                        {
+                            stack.push(neighbor);
+                        }
+                        else if (visited[neighbor] && neighbor == start)
+                        {
+                            if (path.size() > maxCycleLength)
+                            {
+                                maxCycleLength = path.size();
+                                maxCycles.clear();
+                                maxCycles.push_back(path);
+                            }
+                            else if (path.size() == maxCycleLength)
+                            {
+                                maxCycles.push_back(path);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                stack.pop();
+
+                if (!path.empty() && path.back() == current)
+                {
+                    path.pop_back();
+                }
+            }
+        }
+    }
+    return maxCycles;
+}
+
+int approxGetMaxCyclesCount(Graph& graph)
+{
+    return approxGetMaxCycles(graph).size();
 }
 
 std::vector<std::pair<int, int>> graphComplement(Graph graph)
@@ -171,7 +290,7 @@ int lookaheadCost(
         {
             int edgeWeight = weightedGraph.getEdgeWeight(currentVertex, i);
             if (edgeWeight == std::numeric_limits<int>::max())
-                continue; // Brak krawêdzi, pomijamy
+                continue; // Brak krawï¿½dzi, pomijamy
 
             visited[i] = true;
             int cost = edgeWeight + lookaheadCost(weightedGraph, i, visited, depth + 1, maxDepth);
@@ -236,8 +355,8 @@ std::vector<std::pair<int, int>> ApproximateATSP(const Graph& graph, int startVe
 
         if (nextVertex == -1)
         {
-            // Nie znaleziono nastêpnego wierzcho³ka
-            // Mo¿emy spróbowaæ znaleŸæ najbli¿szy nieodwiedzony wierzcho³ek, nawet jeœli nie ma bezpoœredniej krawêdzi
+            // Nie znaleziono nastï¿½pnego wierzchoï¿½ka
+            // Moï¿½emy sprï¿½bowaï¿½ znaleï¿½ï¿½ najbliï¿½szy nieodwiedzony wierzchoï¿½ek, nawet jeï¿½li nie ma bezpoï¿½redniej krawï¿½dzi
             for (int j = 0; j < n; ++j)
             {
                 if (!visited[j])
