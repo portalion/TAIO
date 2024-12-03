@@ -5,10 +5,11 @@
 #include "Algorithms.h"
 #include "CliHelpers.h"
 
-
+bool askAboutApproximationAlgorithm();
 void getMaxCyclesOperation(Graph g);
 void graphComplementOperation(Graph g);
 void graphDistanceOperation(Graph g1, Graph g2);
+
 
 int main(int argc, char* argv[])
 {
@@ -88,10 +89,21 @@ int main(int argc, char* argv[])
     return 0;
 }
 
+bool askAboutApproximationAlgorithm()
+{
+    std::cout << "Czy chcesz u¿yc algorytmu aproksymujacego? (1 - tak, 0 - nie): ";
+    int choice = getValidInput("Wybierz 1 lub 0: ");
+
+    return choice == 1;
+}
 
 void getMaxCyclesOperation(Graph g)
 {
-    auto foundCycles = getMaxCycles(g);
+    std::vector<std::vector<int>> foundCycles;
+    if (askAboutApproximationAlgorithm())
+        foundCycles = approxGetMaxCycles(g);
+    else
+        foundCycles = getMaxCycles(g);
 
     printSeparator();
     std::cout << "Znaleziono " << foundCycles.size() << " cykli\n";
@@ -107,7 +119,12 @@ void getMaxCyclesOperation(Graph g)
 
 void graphComplementOperation(Graph g)
 {
-    auto result = graphComplement(g);
+    std::vector<std::pair<int, int>> result;
+    if (askAboutApproximationAlgorithm())
+        result = ApproximateATSP(g, 0 , 1);
+    else
+        result = graphComplement(g);
+
     for (auto edge : result)
     {
         g.addEdge(edge.first, edge.second);

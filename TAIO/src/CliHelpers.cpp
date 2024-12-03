@@ -66,7 +66,7 @@ Graph chooseGraph(const std::vector<Graph>& firstFileGraphs, const std::vector<G
         printSeparator();  
         std::cout << std::left;  
 
-        if(secondFileGraphs.size() == 0)
+        if (secondFileGraphs.size() == 0)
         {
             graphIndex = getValidInput("Wybierz numer grafu z pierwszego pliku (0 aby anulowac): ");
             if (graphIndex >= 1 && graphIndex <= firstFileGraphs.size())
