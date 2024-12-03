@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
 
 bool askAboutApproximationAlgorithm()
 {
-    std::cout << "Czy chcesz u¿yc algorytmu aproksymujacego? (1 - tak, 0 - nie): ";
+    std::cout << "Czy chcesz uzyc algorytmu aproksymujacego? (1 - tak, 0 - nie): ";
     int choice = getValidInput("Wybierz 1 lub 0: ");
 
     return choice == 1;
