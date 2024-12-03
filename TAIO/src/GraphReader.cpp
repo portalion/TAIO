@@ -41,3 +41,13 @@ Graph GraphReader::readNextGraph()
     
     return result;
 }
+
+std::vector<Graph> GraphReader::readAllGraphs()
+{
+    std::vector<Graph> result;
+    while (!isEmpty())
+    {
+        result.push_back(readNextGraph());
+    }
+    return result;
+}

@@ -10,5 +10,6 @@ public:
 	inline bool isEmpty() { return numberOfGraphs <= 0; }
 	GraphReader(std::istream& input);
 	Graph readNextGraph();
+	std::vector<Graph> readAllGraphs();
 };
 

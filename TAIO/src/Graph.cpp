@@ -53,3 +53,55 @@ void Graph::printGraph(std::ostream& stream) const
         stream << '\n';
     }
 }
+
+std::ostream& operator<<(std::ostream& os, const Graph& g)
+{
+    for (int i = 0; i < g.verticesCount; ++i)
+    {
+        for (int j = 0; j < g.verticesCount; ++j)
+        {
+            os << g.edgeMatrix[i][j] << " ";
+        }
+        os << "\n";
+    }
+    return os;
+}
+
+
+int Graph::GetDistanceBetweenGraphs(Graph& a, Graph& b)
+{
+    if (a.verticesCount > b.verticesCount)
+    {
+        return GetDistanceBetweenGraphs(b, a);
+    }
+
+    int result = 0;
+    result += std::abs(a.verticesCount - b.verticesCount);
+    for (int i = 0; i < a.verticesCount; i++)
+    {
+        for (int j = 0; j < a.verticesCount; j++)
+        {
+            if (a.edgeMatrix[i][j] != b.edgeMatrix[i][j])
+                result++;
+        }
+    }
+    for (int i = a.verticesCount; i < b.verticesCount; i++)
+    {
+        for (int j = 0; j < b.verticesCount; j++)
+        {
+            if (b.edgeMatrix[i][j] == 1)
+                result++;
+            if (b.edgeMatrix[j][i] == 1)
+                result++;
+        }
+    }
+    for (int i = a.verticesCount; i < b.verticesCount; i++)
+    {
+        for (int j = a.verticesCount; j < b.verticesCount; j++)
+        {
+            if (b.edgeMatrix[i][j] == 1)
+                result--;
+        }
+    }
+    return result;
+}

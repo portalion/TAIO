@@ -1,73 +1,127 @@
 #include <iostream>
+#include <iomanip>
 #include <chrono>
 #include "GraphReader.h"
 #include "Algorithms.h"
+#include "CliHelpers.h"
 
-int main()
+
+void getMaxCyclesOperation(Graph g);
+void graphComplementOperation(Graph g);
+void graphDistanceOperation(Graph g1, Graph g2);
+
+int main(int argc, char* argv[])
 {
-    std::cout << "Hello from main!\n";
-
-    std::ifstream input("data\\test5.txt");
-    auto reader = GraphReader(input);
-
-    while (!reader.isEmpty())
-    {   
-        std::cout << "====================================\n";
-        Graph graph = reader.readNextGraph();
-        //graph.printGraph(std::cout);
-        
-        /*  std::cout << "Smallest complement:\n";
-        std::vector<std::pair<int, int>> complement = graphComplement(graph);
-        for (auto edge : complement)
-        {
-            std::cout << edge.first << ',' << edge.second << ' ';
-        }
-        std::cout << '\n';*/
-
-        int startVertex = 0;
-        int depth = 1;
-        //std::cout << counter << ". Smalest complement approximation: " << std::endl;
-        
-        auto start = std::chrono::high_resolution_clock::now();
-        
-        std::vector<std::pair<int, int>> complementApprox = ApproximateATSP(graph, startVertex, depth);
-        
-        auto end = std::chrono::high_resolution_clock::now();
-
-        std::chrono::duration<double> elapsed = end - start;
-        for (auto edge : complementApprox)
-        {
-            std::cout << edge.first << ',' << edge.second << ' ';
-        }
-        std::cout << '\n';
-        std::cout << elapsed.count() << "s \n";
-        std::cout << "====================================\n";
+    if (argc < 2 || argc > 3)
+    {
+        std::cout << "Nie mozna zaladowac plikow. Podaj je jako argumenty (maksymalnie 2, minimalnie 1).\n";
+        return 1;
     }
 
-	//std::ifstream input("data\\test1.txt");
-	//auto reader = GraphReader(input);
-	//while (!reader.isEmpty())
-	//{
-	//	std::cout << "====================================\n";
-	//	Graph graph = reader.readNextGraph();
-	//	graph.printGraph(std::cout);
-	//	std::cout << '\n';
+    auto firstFileGraphs = LoadGraphs(argv[1]);
+    std::vector<Graph> secondFileGraphs;
 
-	//	auto maxCycles = approxGetMaxCycles(graph);
+    std::cout << std::left;
+    printSeparator();
+    if (argc == 3)
+    {
+        secondFileGraphs = LoadGraphs(argv[2]);
+        std::cout << "Zaladowano 2 pliki\n";
+        printGraphsInfo("Pierwszy plik zawiera:", firstFileGraphs.size());
+        printGraphsInfo("Drugi plik zawiera:", secondFileGraphs.size());
+    }
+    else
+    {
+        std::cout << "Zaladowano 1 plik\n";
+        printGraphsInfo("Plik zawiera:", firstFileGraphs.size());
+    }
+    printSeparator();
+    
+    int choice = 0;
 
-	//	for (auto cycle : maxCycles)
-	//	{
-	//		for (auto v : cycle)
-	//		{
-	//			std::cout << v << ' ';
-	//		}
-	//		std::cout << '\n';
-	//	}
+    do
+    {
+        printMenu();
+        choice = getValidInput("Wybierz opcje: ");
 
-	//	std::cout << '\n';
-	//	std::cout << "====================================\n";
-	//}
+        switch (choice)
+        {
+        case 1:
+        {
+            auto g1 = chooseGraph(firstFileGraphs, secondFileGraphs);
+            if (g1.isEmpty())
+                break;
 
-    std::cout << "Goodbye from main\n";
+            getMaxCyclesOperation(g1);
+
+            break;
+        }
+        case 2:
+        {
+            auto g1 = chooseGraph(firstFileGraphs, secondFileGraphs);
+            if (g1.isEmpty())
+                break;
+
+            graphComplementOperation(g1);
+            break;
+        }
+        case 3:
+        {
+            auto g1 = chooseGraph(firstFileGraphs, secondFileGraphs);
+            if (g1.isEmpty())
+                break;
+            auto g2 = chooseGraph(firstFileGraphs, secondFileGraphs);
+            if (g1.isEmpty())
+                break;
+            
+            graphDistanceOperation(g1, g2);
+            break;
+        }
+        case 0:
+            std::cout << "Konczenie programu...\n";
+            break;
+        default:
+            std::cout << "Niepoprawny wybor.\n";
+            break;
+        }
+    } while (choice != 0);
     return 0;
+}
+
+
+void getMaxCyclesOperation(Graph g)
+{
+    auto foundCycles = getMaxCycles(g);
+
+    printSeparator();
+    std::cout << "Znaleziono " << foundCycles.size() << " cykli\n";
+    for (int i = 0; i < foundCycles.size(); i++)
+    {
+        std::cout << "Cykl " << i + 1 << ": ";
+        for (auto cycleValue : foundCycles[i])
+            std::cout << cycleValue << " ";
+        std::cout << '\n';
+    }
+    printSeparator();
+}
+
+void graphComplementOperation(Graph g)
+{
+    auto result = graphComplement(g);
+    for (auto edge : result)
+    {
+        g.addEdge(edge.first, edge.second);
+    }
+    printSeparator();
+    std::cout << "Znaleziono nastepujace dopelnienie: \n";
+    std::cout << g;
+    printSeparator();
+
+}
+
+void graphDistanceOperation(Graph g1, Graph g2)
+{
+    printSeparator();
+    std::cout << "Odleglosc pomiedzy grafami wynosi: " << Graph::GetDistanceBetweenGraphs(g1, g2) << '\n';
+    printSeparator();
 }
