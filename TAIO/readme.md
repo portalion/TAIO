@@ -12,3 +12,25 @@ Aplikacja jest aplikacj¹ konsolow¹. Aby j¹ uruchomiæ musimy podaæ 1-2 pliki teks
 ```
 taio.exe data/test1.txt data/test2.txt
 ```
+
+## Format pliku
+### Przykladowy plik z jednym grafem
+```
+4
+0 0 1 0
+0 1 0 0
+0 0 0 0
+0 1 1 0
+```
+### Przyk³adowy plik z wieloma grafami
+```
+2
+3
+1 1 1
+1 1 1
+1 1 1
+
+2
+0 1
+1 0
+```
