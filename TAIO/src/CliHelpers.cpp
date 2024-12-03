@@ -68,7 +68,7 @@ Graph chooseGraph(const std::vector<Graph>& firstFileGraphs, const std::vector<G
 
         if(secondFileGraphs.size() == 0)
         {
-            graphIndex = getValidInput("Wybierz numer grafu z pierwszego pliku: ");
+            graphIndex = getValidInput("Wybierz numer grafu z pierwszego pliku (0 aby anulowac): ");
             if (graphIndex >= 1 && graphIndex <= firstFileGraphs.size())
             {
                 validChoice = true;
@@ -76,7 +76,8 @@ Graph chooseGraph(const std::vector<Graph>& firstFileGraphs, const std::vector<G
             }
             else
             {
-                std::cout << "Niepoprawny numer grafu. Sprobuj ponownie.\n";
+                std::cout << "Anulowanie wyboru grafu.\n";
+                return Graph(0);
             }
             continue;
         }
