@@ -78,17 +78,17 @@ void maxCyclesDFS(Graph& graph, int current, int start, std::vector<bool>& visit
 std::vector<std::vector<int>> getMaxCycles(Graph& graph)
 {
     int verticesCount = graph.getNumberOfVertices();
-    std::vector<std::vector<int>> allLongestCycles;
+    std::vector<std::vector<int>> maxCycles;
     int maxLength = 0;
     std::vector<bool> visited(verticesCount, false);
     std::vector<int> path;
 
     for (int start = 0; start < verticesCount; ++start)
     {
-        maxCyclesDFS(graph, start, start, visited, path, maxLength, allLongestCycles);
+        maxCyclesDFS(graph, start, start, visited, path, maxLength, maxCycles);
     }
 
-    return allLongestCycles;
+    return maxCycles;
 }
 
 int getMaxCyclesCount(Graph& graph)
