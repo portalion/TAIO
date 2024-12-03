@@ -33,6 +33,9 @@
     <ClInclude Include="src\Graph.h" />
     <ClInclude Include="src\WeightedGraph.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="readme.md" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
