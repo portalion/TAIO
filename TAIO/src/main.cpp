@@ -112,7 +112,7 @@ void getMaxCyclesOperation(Graph g)
         std::cout << "Cykl " << i + 1 << ": ";
         for (auto cycleValue : foundCycles[i])
             std::cout << cycleValue << " ";
-        std::cout << '\n';
+        std::cout << foundCycles[i][0] << '\n';
     }
     printSeparator();
 }

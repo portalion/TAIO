@@ -34,3 +34,18 @@ taio.exe data/test1.txt data/test2.txt
 0 1
 1 0
 ```
+
+### Przyk³adowy plik z wieloma grafami i ich opisem
+```
+2
+3
+1 1 1
+1 1 1
+1 1 1
+some text 
+which describes graph
+
+2
+0 1
+1 0
+```
