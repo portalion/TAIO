@@ -66,7 +66,21 @@ Graph chooseGraph(const std::vector<Graph>& firstFileGraphs, const std::vector<G
         printSeparator();  
         std::cout << std::left;  
 
-        
+        if(secondFileGraphs.size() == 0)
+        {
+            graphIndex = getValidInput("Wybierz numer grafu z pierwszego pliku: ");
+            if (graphIndex >= 1 && graphIndex <= firstFileGraphs.size())
+            {
+                validChoice = true;
+                return firstFileGraphs[graphIndex - 1];
+            }
+            else
+            {
+                std::cout << "Niepoprawny numer grafu. Sprobuj ponownie.\n";
+            }
+            continue;
+        }
+
         std::cout << std::setw(30) << "Wybierz kolekcje grafow:" << std::endl;
         std::cout << std::setw(30) << "1. Pierwszy plik (zawiera " << firstFileGraphs.size() << " grafow)" << std::endl;
         std::cout << std::setw(30) << "2. Drugi plik (zawiera " << secondFileGraphs.size() << " grafow)" << std::endl;
