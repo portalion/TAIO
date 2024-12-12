@@ -22,7 +22,7 @@ GraphReader::GraphReader(std::istream& input)
         tempStream << line << '\n';
         singleIntegerLines += isSingleInteger(line);
     }
-    for(int i = tempStream.str().size() - 1; i >= 0; i--)
+    for (int i = tempStream.str().size() - 1; i >= 0; i--)
         input.putback(tempStream.str()[i]);
 
     if (singleIntegerLines == 1)
@@ -40,6 +40,7 @@ Graph GraphReader::readNextGraph()
     int vertices;
     streamToReadFrom >> vertices;
     Graph result = Graph(vertices);
+    streamToReadFrom.ignore(1);
 
     for (int i = 0; i < vertices; i++) 
     {
