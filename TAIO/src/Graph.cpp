@@ -44,7 +44,7 @@ void Graph::setEdge(int vertexA, int vertexB, int value)
 
 void Graph::printGraph(std::ostream& stream) const
 {
-    stream << this->verticesCount << '\n';
+    //stream << this->verticesCount << '\n';
 
     for (std::vector<int> row : this->edgeMatrix)
     {

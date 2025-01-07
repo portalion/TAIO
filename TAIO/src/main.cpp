@@ -141,6 +141,13 @@ int main(int argc, char* argv[])
 }
 void getMaxCyclesOperation(Graph g, bool useApprox)
 {
+    std::cout << "Max cycles\n";
+    printSeparator();
+    std::cout << "Graph\n"
+        << "Number of vertices: " << g.getNumberOfVertices() << "\n"
+        << "Adjacency matrix: \n";
+    g.printGraph(std::cout);
+
     std::vector<std::vector<int>> foundCycles;
 
     if (useApprox)
@@ -149,39 +156,53 @@ void getMaxCyclesOperation(Graph g, bool useApprox)
         foundCycles = getMaxCycles(g);
 
     printSeparator();
-    std::cout << "Znaleziono " << foundCycles.size() << " cykli\n";
-    for (int i = 0; i < (int)foundCycles.size(); i++)
+    std::cout << "Found " << foundCycles.size() << " cycles\n";
+
+    if (foundCycles.size() > 0)
     {
-        std::cout << "Cykl " << i + 1 << ": ";
-        for (auto cycleValue : foundCycles[i])
+        std::cout << "Length of longhest cycle: " << foundCycles[0].size() << "\n";
+        std::cout << "Example cycle: \n";
+        for (auto cycleValue : foundCycles[0])
             std::cout << cycleValue << " ";
 
         // Dla ³adnego zamkniêcia cyklu dodajemy pocz¹tek na koñcu
-        std::cout << foundCycles[i][0] << '\n';
+        std::cout << foundCycles[0][0] << '\n';
     }
+
     printSeparator();
 }
 
 void graphComplementToHamiltonOperation(Graph g, bool useApprox)
 {
+    std::cout << "Hamiltonian extension\n";
+    printSeparator();
+    std::cout << "Graph\n"
+        << "Number of vertices:" << g.getNumberOfVertices() << "\n"
+        << "Adjacency matrix: \n";
+     g.printGraph(std::cout);
+
     std::vector<std::pair<int, int>> result;
     if (useApprox)
     {
-        result = ApproximateATSP(g, 0, 1);
+        result = ApproximateATSP(g, 0, 3);
     }
     else
     {
         result = graphComplement(g);
     }
+    Graph edgesToAddGraph(g.getNumberOfVertices());
 
     for (auto edge : result)
     {
-        g.addEdge(edge.first, edge.second);
+        edgesToAddGraph.addEdge(edge.first, edge.second);
     }
 
     printSeparator();
-    std::cout << "Znaleziono nastepujace krawedzie do dodania (dopelnienie): \n";
-    std::cout << g;
+    std::cout << "Number of edges to add: "
+        << result.size() << "\n";
+    std::cout << "Edges to add:\n";
+    std::cout << edgesToAddGraph;
+    std::cout << "Number of hamiltonian cycles:" << "tu liczba";
     printSeparator();
 }
 
