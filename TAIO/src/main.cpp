@@ -1,144 +1,247 @@
 #include <iostream>
 #include <iomanip>
 #include <chrono>
+#include <string>
+#include <vector>
 #include "GraphReader.h"
 #include "Algorithms.h"
 #include "CliHelpers.h"
 
-bool askAboutApproximationAlgorithm();
-void getMaxCyclesOperation(Graph g);
-void graphComplementOperation(Graph g);
-void graphDistanceOperation(Graph g1, Graph g2);
+void getMaxCyclesOperation(Graph g, bool useApprox);
+void graphComplementToHamiltonOperation(Graph g, bool useApprox);
+void graphDistanceOperation(Graph g1, Graph g2, bool useApprox);
 
+void printUsage()
+{
+    std::cout << "Usage:\n"
+        << "  ./Taio.exe [filename] distance [graph_index1] [graph_index2] [approx]\n"
+        << "     calculates the distance between graphs with indices [graph_index1] and [graph_index2]\n"
+        << "     If you provide 'approx' at the end, an approximate algorithm will be used.\n\n"
+        << "  ./Taio.exe [filename] cycles [graph_index] [approx]\n"
+        << "     calculates the longest cycles in the graph with index [graph_index].\n"
+        << "     If you provide 'approx' at the end, an approximate algorithm will be used.\n\n"
+        << "  ./Taio.exe [filename] hamilton [graph_index] [approx]\n"
+        << "     calculates the minimal set of edges to add in order to obtain a Hamiltonian cycle in the graph with index [graph_index].\n"
+        << "     If you provide 'approx' at the end, an approximate algorithm will be used.\n\n"
+        << "Examples:\n"
+        << "  ./Taio.exe data.txt cycles 1\n"
+        << "  ./Taio.exe data.txt cycles 1 approx\n"
+        << "  ./Taio.exe data.txt hamilton 3\n"
+        << "  ./Taio.exe data.txt hamilton 3 approx\n"
+        << "  ./Taio.exe data.txt distance 5 6\n"
+        << "  ./Taio.exe data.txt distance 5 6 approx\n";
+}
 
 int main(int argc, char* argv[])
 {
-    if (argc < 2 || argc > 3)
+    //  tryb normalny - minimum 3 argumenty
+    //    [filename], [function], [index lub dwa indeksy], ew. [approx]
+    if (argc < 3)
     {
-        std::cout << "Nie mozna zaladowac plikow. Podaj je jako argumenty (maksymalnie 2, minimalnie 1).\n";
+        printUsage();
         return 1;
     }
 
-    auto firstFileGraphs = LoadGraphs(argv[1]);
-    std::vector<Graph> secondFileGraphs;
+    // Nazwa pliku i funkcja
+    std::string filename = argv[1];
+    std::string function = argv[2];
 
-    std::cout << std::left;
-    printSeparator();
-    if (argc == 3)
+    // Wczytujemy wszystkie grafy z pliku
+    auto graphs = LoadGraphs(filename);
+    // Sprawdzamy, czy faktycznie sie wczyta³y
+    if (graphs.empty())
     {
-        secondFileGraphs = LoadGraphs(argv[2]);
-        std::cout << "Zaladowano 2 pliki\n";
-        printGraphsInfo("Pierwszy plik zawiera:", firstFileGraphs.size());
-        printGraphsInfo("Drugi plik zawiera:", secondFileGraphs.size());
+        std::cerr << "Failed to load any graph form file: " << filename << std::endl;
+        return 1;
     }
-    else
+
+    // Weryfikujemy, czy ostatni argument to "approx"
+    bool useApprox = false;
+    if (std::string(argv[argc - 1]) == "approx")
     {
-        std::cout << "Zaladowano 1 plik\n";
-        printGraphsInfo("Plik zawiera:", firstFileGraphs.size());
+        useApprox = true;
     }
-    printSeparator();
-    
-    int choice = 0;
 
-    do
+    try
     {
-        printMenu();
-        choice = getValidInput("Wybierz opcje: ");
-
-        switch (choice)
+        if (function == "distance")
         {
-        case 1:
-        {
-            auto g1 = chooseGraph(firstFileGraphs, secondFileGraphs);
-            if (g1.isEmpty())
-                break;
+            // Oczekujemy przynajmniej 5 argumentow: 
+            // ./Taio.exe filename distance index1 index2 [approx]
+            if (argc < 5)
+            {
+                printUsage();
+                return 1;
+            }
 
-            getMaxCyclesOperation(g1);
+            int index1 = std::stoi(argv[3]);
+            int index2 = std::stoi(argv[4]);
 
-            break;
-        }
-        case 2:
-        {
-            auto g1 = chooseGraph(firstFileGraphs, secondFileGraphs);
-            if (g1.isEmpty())
-                break;
+            if (index1 < 0 || index1 >= (int)graphs.size() ||
+                index2 < 0 || index2 >= (int)graphs.size())
+            {
+                std::cerr << "Wrong graph index!\n";
+                return 1;
+            }
 
-            graphComplementOperation(g1);
-            break;
+            // Wykonujemy operacje distance
+            graphDistanceOperation(graphs[index1], graphs[index2], useApprox);
         }
-        case 3:
+        else if (function == "cycles")
         {
-            auto g1 = chooseGraph(firstFileGraphs, secondFileGraphs);
-            if (g1.isEmpty())
-                break;
-            auto g2 = chooseGraph(firstFileGraphs, secondFileGraphs);
-            if (g1.isEmpty())
-                break;
-            
-            graphDistanceOperation(g1, g2);
-            break;
+            // ./Taio.exe filename cycles index [approx]
+            if (argc < 4)
+            {
+                printUsage();
+                return 1;
+            }
+
+            int index = std::stoi(argv[3]);
+            if (index < 0 || index >= (int)graphs.size())
+            {
+                std::cerr << "Wrong graph index!\n";
+                return 1;
+            }
+
+            // Wykonujemy operacje cycles
+            getMaxCyclesOperation(graphs[index], useApprox);
         }
-        case 0:
-            std::cout << "Konczenie programu...\n";
-            break;
-        default:
-            std::cout << "Niepoprawny wybor.\n";
-            break;
+        else if (function == "hamilton")
+        {
+            // ./Taio.exe filename hamilton index [approx]
+            if (argc < 4)
+            {
+                printUsage();
+                return 1;
+            }
+
+            int index = std::stoi(argv[3]);
+            if (index < 0 || index >= (int)graphs.size())
+            {
+                std::cerr << "Wrong graph index!\n";
+                return 1;
+            }
+
+            graphComplementToHamiltonOperation(graphs[index], useApprox);
         }
-    } while (choice != 0);
+        else
+        {
+            std::cerr << "Unknown function: " << function << std::endl;
+            printUsage();
+            return 1;
+        }
+    }
+    catch (const std::exception& ex)
+    {
+        std::cerr << "An error ocured: " << ex.what() << std::endl;
+        return 1;
+    }
+
     return 0;
 }
-
-bool askAboutApproximationAlgorithm()
+void getMaxCyclesOperation(Graph g, bool useApprox)
 {
-    std::cout << "Czy chcesz uzyc algorytmu aproksymujacego? (1 - tak, 0 - nie): ";
-    int choice = getValidInput("Wybierz 1 lub 0: ");
+    std::cout << "Max cycles\n";
+    printSeparator();
+    std::cout << "Graph\n"
+        << "Number of vertices: " << g.getNumberOfVertices() << "\n"
+        << "Adjacency matrix: \n";
+    g.printGraph(std::cout);
 
-    return choice == 1;
-}
-
-void getMaxCyclesOperation(Graph g)
-{
     std::vector<std::vector<int>> foundCycles;
-    if (askAboutApproximationAlgorithm())
+
+    if (useApprox)
         foundCycles = approxGetMaxCycles(g);
     else
         foundCycles = getMaxCycles(g);
 
     printSeparator();
-    std::cout << "Znaleziono " << foundCycles.size() << " cykli\n";
-    for (int i = 0; i < foundCycles.size(); i++)
+    std::cout << "Found " << foundCycles.size() << " cycles\n";
+
+    if (foundCycles.size() > 0)
     {
-        std::cout << "Cykl " << i + 1 << ": ";
-        for (auto cycleValue : foundCycles[i])
+        std::cout << "Length of longhest cycle: " << foundCycles[0].size() << "\n";
+        std::cout << "Example cycle: \n";
+        for (auto cycleValue : foundCycles[0])
             std::cout << cycleValue << " ";
-        std::cout << foundCycles[i][0] << '\n';
+
+        // Dla ³adnego zamkniêcia cyklu dodajemy pocz¹tek na koñcu
+        std::cout << foundCycles[0][0] << '\n';
     }
+
     printSeparator();
 }
 
-void graphComplementOperation(Graph g)
+void graphComplementToHamiltonOperation(Graph g, bool useApprox)
 {
+    std::cout << "Hamiltonian extension\n";
+    printSeparator();
+    std::cout << "Graph\n"
+        << "Number of vertices:" << g.getNumberOfVertices() << "\n"
+        << "Adjacency matrix: \n";
+     g.printGraph(std::cout);
+
     std::vector<std::pair<int, int>> result;
-    if (askAboutApproximationAlgorithm())
-        result = ApproximateATSP(g, 0 , 1);
+    std::vector<std::vector<int>> foundCycles;
+
+    if (useApprox)
+    {
+        result = ApproximateATSP(g, 0, 3);
+    }
     else
+    {
         result = graphComplement(g);
+    }
+    Graph edgesToAddGraph(g.getNumberOfVertices());
+
+    for (auto edge : result)
+    {
+        edgesToAddGraph.addEdge(edge.first, edge.second);
+    }
+
+    printSeparator();
+    std::cout << "Number of edges to add: "
+        << result.size() << "\n";
+    std::cout << "Edges to add: \n";
+    std::cout << edgesToAddGraph;
 
     for (auto edge : result)
     {
         g.addEdge(edge.first, edge.second);
     }
-    printSeparator();
-    std::cout << "Znaleziono nastepujace dopelnienie: \n";
-    std::cout << g;
-    printSeparator();
 
+    if (useApprox)
+        foundCycles = approxGetMaxCycles(g);
+    else
+        foundCycles = getMaxCycles(g);
+
+    std::cout << "Number of hamiltonian cycles: " << foundCycles.size() <<"\n";
+    if(foundCycles.size() > 0)
+    {
+        std::cout << "Example cycle: \n";
+        for (auto cycleValue : foundCycles[0])
+            std::cout << cycleValue << " ";
+
+        // Dla ³adnego zamkniêcia cyklu dodajemy pocz¹tek na koñcu
+        std::cout << foundCycles[0][0] << '\n';
+    }
+    printSeparator();
 }
 
-void graphDistanceOperation(Graph g1, Graph g2)
+void graphDistanceOperation(Graph g1, Graph g2, bool useApprox)
 {
     printSeparator();
-    std::cout << "Odleglosc pomiedzy grafami wynosi: " << Graph::GetDistanceBetweenGraphs(g1, g2) << '\n';
+
+    if (useApprox)
+    {
+        int dist = 0; //Do uzupelnienia
+        std::cout << "Approximative distance between graphs is: " << dist << '\n';
+    }
+    else
+    {
+        int dist = 0; //do uzupelnienia
+        std::cout << "Distance between graphs is: " << dist << '\n';
+    }
+
     printSeparator();
 }
