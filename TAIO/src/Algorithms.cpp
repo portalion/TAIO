@@ -167,21 +167,19 @@ std::vector<std::pair<int, int>> graphComplement(Graph graph)
 
     std::vector<std::set<int>> subsets = getAllSubsets(n);
 
-    std::map<std::pair<std::set<int>, int>, std::pair<std::vector<int>, int>> g;
+    std::map<std::pair<std::set<int>, int>, std::pair<int, int>> g;
     for (int k = 1; k < n; ++k)
     {
         std::set<int> subset;
         subset.insert(k);
-        std::vector<int> path;
-        path.push_back(k);
         int cost = graph.hasEdge(0, k) ? 0 : 1;
 
         std::pair<std::set<int>, int> keyPair;
         keyPair.first = subset;
         keyPair.second = k;
 
-        std::pair<std::vector<int>, int> valuePair;
-        valuePair.first = path;
+        std::pair<int, int> valuePair;
+        valuePair.first = 0;
         valuePair.second = cost;
 
         g[keyPair] = valuePair;
@@ -221,14 +219,8 @@ std::vector<std::pair<int, int>> graphComplement(Graph graph)
             keyPair.first = subset;
             keyPair.second = k;
 
-            std::pair<std::set<int>, int> tempPair;
-            tempPair.first = keySet;
-            tempPair.second = minM;
-            std::vector<int> path = g[tempPair].first;
-            path.push_back(k);
-
-            std::pair<std::vector<int>, int> valuePair;
-            valuePair.first = path;
+            std::pair<int, int> valuePair;
+            valuePair.first = minM;
             valuePair.second = minCost;
 
             g[keyPair] = valuePair;
@@ -252,8 +244,20 @@ std::vector<std::pair<int, int>> graphComplement(Graph graph)
     }
     
     keyPair.second = bestK;
-    std::vector<int> finalPath = g[keyPair].first;
+    int toAdd = bestK == -1 ? 0 : bestK;
+    std::vector<int> finalPath;
+    while (toAdd != 0)
+    {
+        finalPath.push_back(toAdd);
+        std::pair<std::set<int>, int> temp;
+        temp.first = fullSubset;
+        temp.second = toAdd;
+        int toAddCopy = toAdd;
+        toAdd = g[temp].first;
+        fullSubset.erase(toAddCopy);
+    }
     finalPath.push_back(0);
+    std::reverse(finalPath.begin(), finalPath.end());
     finalPath.push_back(finalPath[0]);
 
     for (int i = 0; i < n; ++i)
