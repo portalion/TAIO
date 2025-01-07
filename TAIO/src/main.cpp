@@ -182,6 +182,8 @@ void graphComplementToHamiltonOperation(Graph g, bool useApprox)
      g.printGraph(std::cout);
 
     std::vector<std::pair<int, int>> result;
+    std::vector<std::vector<int>> foundCycles;
+
     if (useApprox)
     {
         result = ApproximateATSP(g, 0, 3);
@@ -200,9 +202,29 @@ void graphComplementToHamiltonOperation(Graph g, bool useApprox)
     printSeparator();
     std::cout << "Number of edges to add: "
         << result.size() << "\n";
-    std::cout << "Edges to add:\n";
+    std::cout << "Edges to add: \n";
     std::cout << edgesToAddGraph;
-    std::cout << "Number of hamiltonian cycles:" << "tu liczba";
+
+    for (auto edge : result)
+    {
+        g.addEdge(edge.first, edge.second);
+    }
+
+    if (useApprox)
+        foundCycles = approxGetMaxCycles(g);
+    else
+        foundCycles = getMaxCycles(g);
+
+    std::cout << "Number of hamiltonian cycles: " << foundCycles.size() <<"\n";
+    if(foundCycles.size() > 0)
+    {
+        std::cout << "Example cycle: \n";
+        for (auto cycleValue : foundCycles[0])
+            std::cout << cycleValue << " ";
+
+        // Dla ³adnego zamkniêcia cyklu dodajemy pocz¹tek na koñcu
+        std::cout << foundCycles[0][0] << '\n';
+    }
     printSeparator();
 }
 
@@ -212,12 +234,12 @@ void graphDistanceOperation(Graph g1, Graph g2, bool useApprox)
 
     if (useApprox)
     {
-        int dist = 0; //approximateDistance(g1, g2);
+        int dist = 0; //Do uzupelnienia
         std::cout << "Odleglosc aproksymowana pomiedzy grafami: " << dist << '\n';
     }
     else
     {
-        int dist = Graph::GetDistanceBetweenGraphs(g1, g2);
+        int dist = 0; //do uzupelnienia
         std::cout << "Odleglosc pomiedzy grafami: " << dist << '\n';
     }
 
