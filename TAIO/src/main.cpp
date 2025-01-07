@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
     // Sprawdzamy, czy faktycznie sie wczyta³y
     if (graphs.empty())
     {
-        std::cerr << "Failed to load any graph form file: " << filename << std::endl;
+        std::cerr << "Failed to load any graph from file: " << filename << std::endl;
         return 1;
     }
 
@@ -160,7 +160,7 @@ void getMaxCyclesOperation(Graph g, bool useApprox)
 
     if (foundCycles.size() > 0)
     {
-        std::cout << "Length of longhest cycle: " << foundCycles[0].size() << "\n";
+        std::cout << "Length of longest cycle: " << foundCycles[0].size() << "\n";
         std::cout << "Example cycle: \n";
         for (auto cycleValue : foundCycles[0])
             std::cout << cycleValue << " ";
@@ -234,12 +234,12 @@ void graphDistanceOperation(Graph g1, Graph g2, bool useApprox)
 
     if (useApprox)
     {
-        int dist = 0; //Do uzupelnienia
+        int dist = Graph::GetDistanceBetweenGraphsApprox(g1, g2);
         std::cout << "Approximative distance between graphs is: " << dist << '\n';
     }
     else
     {
-        int dist = 0; //do uzupelnienia
+        int dist = Graph::GetDistanceBetweenGraphs(g1, g2);
         std::cout << "Distance between graphs is: " << dist << '\n';
     }
 

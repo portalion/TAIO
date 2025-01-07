@@ -8,7 +8,7 @@ int Graph::GetDistanceBetweenGraphsHelper(Graph& a, Graph& b)
 {
     if (a.verticesCount > b.verticesCount)
     {
-        return GetDistanceBetweenGraphs(b, a);
+        return GetDistanceBetweenGraphsHelper(b, a);
     }
 
     int result = 0;
