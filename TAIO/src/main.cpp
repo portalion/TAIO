@@ -13,23 +13,23 @@ void graphDistanceOperation(Graph g1, Graph g2, bool useApprox);
 
 void printUsage()
 {
-    std::cout << "Uzycie:\n"
+    std::cout << "Usage:\n"
         << "  ./Taio.exe [filename] distance [graph_index1] [graph_index2] [approx]\n"
-        << "     oblicza odleglosc miedzy grafami o indeksach [graph_index1] i [graph_index2]\n"
-        << "     Jesli podasz 'approx' na koncu, uzyty zostanie algorytm przyblizony.\n\n"
+        << "     calculates the distance between graphs with indices [graph_index1] and [graph_index2]\n"
+        << "     If you provide 'approx' at the end, an approximate algorithm will be used.\n\n"
         << "  ./Taio.exe [filename] cycles [graph_index] [approx]\n"
-        << "     oblicza najdluzsze cykle w grafie o indeksie [graph_index].\n"
-        << "     Jesli podasz 'approx' na koncu, uzyty zostanie algorytm przyblizony.\n\n"
+        << "     calculates the longest cycles in the graph with index [graph_index].\n"
+        << "     If you provide 'approx' at the end, an approximate algorithm will be used.\n\n"
         << "  ./Taio.exe [filename] hamilton [graph_index] [approx]\n"
-        << "     oblicza minimalny zbior krawedzi do dodania, by uzyskac cykl Hamiltona w grafie o indeksie [graph_index].\n"
-        << "     Jesli podasz 'approx' na koncu, uzyty zostanie algorytm przyblizony.\n\n"
-        << "Przyklady:\n"
-        << "  ./Taio.exe dane.txt cycles 1\n"
-        << "  ./Taio.exe dane.txt cycles 1 approx\n"
-        << "  ./Taio.exe dane.txt hamilton 3\n"
-        << "  ./Taio.exe dane.txt hamilton 3 approx\n"
-        << "  ./Taio.exe dane.txt distance 5 6\n"
-        << "  ./Taio.exe dane.txt distance 5 6 approx\n";
+        << "     calculates the minimal set of edges to add in order to obtain a Hamiltonian cycle in the graph with index [graph_index].\n"
+        << "     If you provide 'approx' at the end, an approximate algorithm will be used.\n\n"
+        << "Examples:\n"
+        << "  ./Taio.exe data.txt cycles 1\n"
+        << "  ./Taio.exe data.txt cycles 1 approx\n"
+        << "  ./Taio.exe data.txt hamilton 3\n"
+        << "  ./Taio.exe data.txt hamilton 3 approx\n"
+        << "  ./Taio.exe data.txt distance 5 6\n"
+        << "  ./Taio.exe data.txt distance 5 6 approx\n";
 }
 
 int main(int argc, char* argv[])
@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
     // Sprawdzamy, czy faktycznie sie wczyta³y
     if (graphs.empty())
     {
-        std::cerr << "Nie udalo sie wczytac zadnych grafow z pliku: " << filename << std::endl;
+        std::cerr << "Failed to load any graph form file: " << filename << std::endl;
         return 1;
     }
 
@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
             if (index1 < 0 || index1 >= (int)graphs.size() ||
                 index2 < 0 || index2 >= (int)graphs.size())
             {
-                std::cerr << "Niepoprawne indeksy grafow!\n";
+                std::cerr << "Wrong graph index!\n";
                 return 1;
             }
 
@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
             int index = std::stoi(argv[3]);
             if (index < 0 || index >= (int)graphs.size())
             {
-                std::cerr << "Niepoprawny indeks grafu!\n";
+                std::cerr << "Wrong graph index!\n";
                 return 1;
             }
 
@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
             int index = std::stoi(argv[3]);
             if (index < 0 || index >= (int)graphs.size())
             {
-                std::cerr << "Niepoprawny indeks grafu!\n";
+                std::cerr << "Wrong graph index!\n";
                 return 1;
             }
 
@@ -126,14 +126,14 @@ int main(int argc, char* argv[])
         }
         else
         {
-            std::cerr << "Nieznana funkcja: " << function << std::endl;
+            std::cerr << "Unknown function: " << function << std::endl;
             printUsage();
             return 1;
         }
     }
     catch (const std::exception& ex)
     {
-        std::cerr << "Wystapil blad: " << ex.what() << std::endl;
+        std::cerr << "An error ocured: " << ex.what() << std::endl;
         return 1;
     }
 
@@ -235,12 +235,12 @@ void graphDistanceOperation(Graph g1, Graph g2, bool useApprox)
     if (useApprox)
     {
         int dist = 0; //Do uzupelnienia
-        std::cout << "Odleglosc aproksymowana pomiedzy grafami: " << dist << '\n';
+        std::cout << "Approximative distance between graphs is: " << dist << '\n';
     }
     else
     {
         int dist = 0; //do uzupelnienia
-        std::cout << "Odleglosc pomiedzy grafami: " << dist << '\n';
+        std::cout << "Distance between graphs is: " << dist << '\n';
     }
 
     printSeparator();
