@@ -315,13 +315,21 @@ int lookaheadCost(
 }
 
 
-std::vector<std::pair<int, int>> ApproximateATSP(const Graph& graph, int startVertex, int maxDepth = 3)
+std::vector<std::pair<int, int>> ApproximateATSP(Graph& graph, int startVertex, int maxDepth = 3)
 {
     std::vector<std::pair<int, int>> complementEdges;
-
+   
+    if (graph.getNumberOfVertices() == 1 && graph.getNumberOfEdges() == 1)
+        return {};
+    if (graph.getNumberOfVertices() == 1)
+    {
+        complementEdges.push_back(std::pair<int,int>(0,0));
+        return complementEdges;
+    }
     WeightedGraph weightedGraph = WeightedGraph::FromUnweightedGraph(graph);
 
     int n = weightedGraph.getVerticesCount();
+   
     std::vector<bool> visited(n, false);
     int currentVertex = startVertex;
     visited[currentVertex] = true;

@@ -22,7 +22,7 @@ int approxGetMaxCyclesCount(Graph& graph);
 
 std::vector<std::pair<int, int>> graphComplement(Graph graph);
 
-std::vector<std::pair<int, int>> ApproximateATSP(const Graph& graph, int startVertex, int maxDepth);
+std::vector<std::pair<int, int>> ApproximateATSP( Graph& graph, int startVertex, int maxDepth);
 
 
 // ===== Complement finding =====
