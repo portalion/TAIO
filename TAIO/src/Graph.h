@@ -10,7 +10,6 @@ private:
 	std::vector<std::vector<int>> edgeMatrix;
 
 	static int GetDistanceBetweenGraphsHelper(Graph& a, Graph& b);
-	int getVertexDegree(int vertexIndex);
 public:
 	Graph(int verticesNumber);
 	Graph(std::vector<int> verticesPermutation, const Graph& b);
@@ -25,6 +24,7 @@ public:
 
 	void printGraph(std::ostream& stream) const;
 
+	int getVertexDegree(int vertexIndex);
 	static int GetDistanceBetweenGraphs(Graph& a, Graph& b);
 	static int GetDistanceBetweenGraphsApprox(Graph& a, Graph& b);
 	friend std::ostream& operator<<(std::ostream& os, const Graph& g);

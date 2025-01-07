@@ -69,7 +69,7 @@ Graph::Graph(std::vector<int> verticesPermutation, const Graph& b)
 
     for (int i = 0; i < edgeMatrix.size(); i++)
     {
-        for (int j = 0; j < edgeMatrix[j].size(); j++)
+        for (int j = 0; j < edgeMatrix[i].size(); j++)
         {
             edgeMatrix[i][j] = b.edgeMatrix[verticesPermutation[i]][verticesPermutation[j]];
         }
